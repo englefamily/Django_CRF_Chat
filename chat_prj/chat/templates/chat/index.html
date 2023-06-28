@@ -1,0 +1,17 @@
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }} - MentorConnect</title>
+        {% else %}
+        <title>MentorConnect</title>
+        {% endif %}
+    </head>
+    <body>
+        <div>
+            Welcome to MentorConnect Chat:
+
+        </div>
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>
