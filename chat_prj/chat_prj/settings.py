@@ -69,8 +69,16 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'chat_prj.asgi.application'
 WSGI_APPLICATION = 'chat_prj.wsgi.application'
+ASGI_APPLICATION = 'chat_prj.asgi.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 
 # Database
