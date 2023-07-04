@@ -9,8 +9,15 @@
     <body>
         <div>
             Welcome to MentorConnect Chat:
+            {% if user.is_anonymous %}
+            <a href="{% url 'login' %}">Login</a>
+            {% else %}
+            <a href="{% url 'lobby' %}">Lobby</a>
+
+            {% endif %}
 
         </div>
+        <br>
         {% block content %}
         {% endblock %}
     </body>

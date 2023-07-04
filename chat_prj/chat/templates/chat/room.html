@@ -84,5 +84,12 @@
             $('#chat-message-input').val('') ;
         });
 
+        chatSocket.onerror = function(e) {
+  // Check the event error reason and redirect user if it's caused by authentication
+  if (e.reason === "The user is not authenticated.") {
+    window.location.replace("/login")
+  }
+}
+
 </script>
 {% endblock footer %}
