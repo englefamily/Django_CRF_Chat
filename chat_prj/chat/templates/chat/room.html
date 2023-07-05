@@ -1,12 +1,11 @@
 {% extends "chat/layout.html" %}
 {% load static %}
 
-
 {% block content %}
     <textarea id="chat-log" cols="100" rows="20"></textarea><br>
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
-{% endblock content %}
+{% endblock %}
 
 {% block footer %}
     <script>
@@ -15,34 +14,33 @@
 
         const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/`);
 
-
         chatSocket.onopen = function(){
             chatSocket.send(
                 JSON.stringify({
-                    pk:room_pk,
-                    action:"join_room",
-                    request_id:request_id,
+                    pk: room_pk,
+                    action: "join_room",
+                    request_id: request_id,
                 })
             );
-                            chatSocket.send(
+            chatSocket.send(
                 JSON.stringify({
-                    pk:room_pk,
-                    action:"retrieve",
-                    request_id:request_id,
+                    pk: room_pk,
+                    action: "retrieve",
+                    request_id: request_id,
                 })
             );
-                            chatSocket.send(
+            chatSocket.send(
                 JSON.stringify({
-                    pk:room_pk,
-                    action:"subscribe_to_messages_in_room",
-                    request_id:request_id,
+                    pk: room_pk,
+                    action: "subscribe_to_messages_in_room",
+                    request_id: request_id,
                 })
             );
-                            chatSocket.send(
+            chatSocket.send(
                 JSON.stringify({
-                    pk:room_pk,
-                    action:"subscribe_instance",
-                    request_id:request_id,
+                    pk: room_pk,
+                    action: "subscribe_instance",
+                    request_id: request_id,
                 })
             );
         };
@@ -55,7 +53,7 @@
                     setMessages(old => data.messages);
                     break;
                 case "create":
-                    setMessages(old => [...old, data])
+                    setMessages(old => [...old, data]);
                     break;
                 default:
                     break;
@@ -81,8 +79,7 @@
                 action: "create_message",
                 request_id: request_id
             }));
-            $('#chat-message-input').val('') ;
+            $('#chat-message-input').val('');
         });
-
-</script>
-{% endblock footer %}
+    </script>
+{% endblock %}

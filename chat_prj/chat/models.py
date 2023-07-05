@@ -1,12 +1,9 @@
 from django.db import models
-from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group, Permission
-
 
 class User(AbstractUser):
     groups = models.ManyToManyField(Group, blank=True, related_name="customuser_set")
     user_permissions = models.ManyToManyField(Permission, blank=True, related_name="customuser_set")
-
 
 class Room(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False, unique=True)
@@ -15,7 +12,6 @@ class Room(models.Model):
 
     def __str__(self):
         return f"Room({self.name} {self.host})"
-
 
 class Message(models.Model):
     room = models.ForeignKey("chat.Room", on_delete=models.CASCADE, related_name="messages")

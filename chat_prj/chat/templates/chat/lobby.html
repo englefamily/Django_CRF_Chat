@@ -1,10 +1,21 @@
 {% extends "chat/layout.html" %}
 
 {% block content %}
-    What chat room would you like to enter?<br>
-    <form method="POST">
-        {% csrf_token %}
-        <input id="room-name-input" name="name" type="text" size="100"><br>
-        <input id="room-name-submit" type="button" value="Enter">
-    </form>
-{% endblock content %}
+    {% if user.is_authenticated %}
+        <p>Welcome, {{ user.username }}!</p>
+        <p>What chat room would you like to enter?</p>
+        <form method="POST" action="{% url 'lobby' %}">
+            {% csrf_token %}
+            <input id="room-name-input" name="name" type="text" size="100"><br>
+            <input id="room-name-submit" type="submit" value="Enter">
+        </form>
+    {% else %}
+        <p>Please log in to access the chat.</p>
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" required><br>
+            <input type="password" name="password" placeholder="Password" required><br>
+            <input type="submit" value="Log In">
+        </form>
+    {% endif %}
+{% endblock %}

@@ -1,56 +1,15 @@
 import json
-# Converting app to be asynchronous. So following import is not needed anymore:
-# from asgiref.sync import async_to_sync
-from channels.generic.websocket import AsyncWebsocketConsumer # Prev used: WebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
 from django.shortcuts import get_object_or_404
 from channels.db import database_sync_to_async
 from django.utils.timezone import now
 from django.conf import settings
 from typing import Generator
-from djangochannelsrestframework.generics import GenericAsyncAPIConsumer, AsyncAPIConsumer
+from djangochannelsrestframework.generics import GenericAsyncAPIConsumer
 from djangochannelsrestframework.observer.generics import (ObserverModelInstanceMixin, action)
 from djangochannelsrestframework.observer import model_observer
 from .models import Room, Message, User
 from .serializers import MessageSerializer, RoomSerializer, UserSerializer
-
-
-# Converting to asynchronous. WebsocketConsumer -> AsyncWebsocketConsumer
-# So redoing the class:
-
-# class ChatConsumer(AsyncWebsocketConsumer):
-#     async def connect(self):
-#         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-#         self.room_group_name = "chat_%s" % self.room_name
-#
-#         # Join room group
-#         await self.channel_layer.group_add(
-#             self.room_group_name, self.channel_name
-#         )
-#
-#         await self.accept()
-#
-#     async def disconnect(self, close_code):
-#         # Leave room group
-#         await self.channel_layer.group_discard(
-#             self.room_group_name, self.channel_name
-#         )
-#
-#     # Receive message from WebSocket
-#     async def receive(self, text_data):
-#         text_data_json = json.loads(text_data)
-#         message = text_data_json["message"]
-#
-#         # Send message to room group
-#         await self.channel_layer.group_send(
-#             self.room_group_name, {"type": "chat_message", "message": message}
-#         )
-#
-#     # Receive message from room group
-#     async def chat_message(self, event):
-#         message = event["message"]
-#
-#         # Send message to WebSocket
-#         await self.send(text_data=json.dumps({"message": message}))
 
 
 class RoomConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer):
@@ -92,7 +51,7 @@ class RoomConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer):
         self,
         message,
         observer=None,
-        subscribing_request_ids = [],
+        subscribing_request_ids=[],
         **kwargs
     ):
         """
@@ -116,7 +75,7 @@ class RoomConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer):
             yield f'room__{room}'
 
     @message_activity.serializer
-    def message_activity(self, instance:Message, action, **kwargs):
+    def message_activity(self, instance: Message, action, **kwargs):
         """
         This is evaluated before the update is sent
         out to all the subscribing consumers.
@@ -129,8 +88,8 @@ class RoomConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer):
             await self.channel_layer.group_send(
                 group,
                 {
-                    'type':'update_users',
-                    'usuarios':await self.current_users(room)
+                    'type': 'update_users',
+                    'usuarios': await self.current_users(room)
                 }
             )
 
@@ -147,11 +106,11 @@ class RoomConsumer(ObserverModelInstanceMixin, GenericAsyncAPIConsumer):
 
     @database_sync_to_async
     def remove_user_from_room(self, room):
-        user:User = self.scope["user"]
+        user: User = self.scope["user"]
         user.current_rooms.remove(room)
 
     @database_sync_to_async
     def add_user_to_room(self, pk):
-        user:User = self.scope["user"]
+        user: User = self.scope["user"]
         if not user.current_rooms.filter(pk=self.room_subscribe).exists():
             user.current_rooms.add(Room.objects.get(pk=pk))
